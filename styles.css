@@ -1,0 +1,31 @@
+/* === COLORES EQUIVALENTES A LOS PERSONALIZADOS (usando clases nativas de Tailwind) === */
+
+/* === Fondos claros === */
+.bg-beige-claro         { background-color: #fefce8; /* tailwind: bg-stone-50 */ }
+.bg-beige-suave         { background-color: #fff7ed; /* tailwind: bg-orange-50 */ }
+.bg-beige-palido        { background-color: #fefce8; /* tailwind: bg-yellow-50 */ }
+.bg-beige-movil         { background-color: #fafaf9; /* tailwind: bg-neutral-50 */ }
+
+/* === Bordes y fondos secundarios === */
+.border-beige-borde     { border-color: #fcd34d;     /* tailwind: border-amber-300 */ }
+.border-beige-secundario { border-color: #fdba74;    /* tailwind: border-orange-300 */ }
+.bg-beige-tabla         { background-color: #fef3c7; /* tailwind: bg-amber-100 */ }
+.bg-beige-hover         { background-color: #fde68a; /* tailwind: hover:bg-amber-100 */ }
+
+/* === Tonos de café (textos y botones) === */
+.text-cafe-10           { color: #292524;            /* tailwind: text-stone-800 */ }
+.text-cafe-9            { color: #7c2d12;            /* tailwind: text-orange-900 */ }
+.text-cafe-7            { color: #57534e;            /* tailwind: text-stone-700 */ }
+
+.bg-cafe-6              { background-color: #9a3412; /* tailwind: bg-orange-800 */ }
+.hover-bg-cafe-8:hover  { background-color: #7c2d12; /* tailwind: hover:bg-orange-900 */ }
+.border-cafe-5          { border-color: #c2410c;     /* tailwind: border-orange-700 */ }
+
+.bg-cafe-3              { background-color: #fb923c; /* tailwind: bg-orange-400 */ }
+.hover-bg-cafe-4:hover  { background-color: #ea580c; /* tailwind: hover:bg-orange-700 */ }
+
+.border-cafe-2          { border-color: #fcd34d;     /* tailwind: border-amber-300 */ }
+.border-cafe-1          { border-color: #d6d3d1;     /* tailwind: border-stone-300 */ }
+
+/* === Otros === */
+.border-gris-claro      { border-color: #d1d5db;     /* tailwind: border-gray-300 */ }

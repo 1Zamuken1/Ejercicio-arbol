@@ -124,12 +124,11 @@
       </nav>
     </div>
 
-    <!-- Formulario Login -->
-
-    <div class="min-h-screen flex items-center justify-center bg-sky-50 px-4">
-      <form class="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
-          Crear cuenta
+    <!-- Formulario Inicio de Sesión -->
+    <div class="min-h-screen flex items-center justify-center bg-lime-50 px-4">
+      <form class="w-full max-w-sm bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-center text-emerald-800 mb-6">
+          Iniciar sesión
         </h2>
 
         <!-- Email -->
@@ -137,14 +136,14 @@
           <input
             type="email"
             name="email"
-            id="email"
+            id="login_email"
             required
-            class="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-blue-400 peer"
+            class="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-emerald-300 appearance-none focus:outline-none focus:ring-0 focus:border-emerald-500 peer"
             placeholder=" "
           />
           <label
-            for="email"
-            class="absolute text-sm text-gray-500 duration-300 transform scale-75 -translate-y-6 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+            for="login_email"
+            class="absolute text-sm text-gray-500 duration-300 transform scale-75 -translate-y-6 top-3 -z-10 origin-[0] peer-focus:text-emerald-600"
             >Correo electrónico</label
           >
         </div>
@@ -154,92 +153,24 @@
           <input
             type="password"
             name="password"
-            id="password"
+            id="login_password"
             required
-            class="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-blue-400 peer"
+            class="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-emerald-300 appearance-none focus:outline-none focus:ring-0 focus:border-emerald-500 peer"
             placeholder=" "
           />
           <label
-            for="password"
-            class="absolute text-sm text-gray-500 duration-300 transform scale-75 -translate-y-6 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+            for="login_password"
+            class="absolute text-sm text-gray-500 duration-300 transform scale-75 -translate-y-6 top-3 -z-10 origin-[0] peer-focus:text-emerald-600"
             >Contraseña</label
           >
         </div>
 
-        <!-- Confirm Password -->
-        <div class="relative z-0 w-full mb-5 group">
-          <input
-            type="password"
-            name="repeat_password"
-            id="repeat_password"
-            required
-            class="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-blue-400 peer"
-            placeholder=" "
-          />
-          <label
-            for="repeat_password"
-            class="absolute text-sm text-gray-500 duration-300 transform scale-75 -translate-y-6 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
-            >Confirmar contraseña</label
-          >
-        </div>
-
-        <!-- Nombres -->
-        <div class="grid md:grid-cols-2 md:gap-6">
-          <div class="relative z-0 w-full mb-5 group">
-            <input
-              type="text"
-              name="nombre"
-              id="nombre"
-              required
-              class="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-blue-400 peer"
-              placeholder=" "
-            />
-            <label
-              for="nombre"
-              class="absolute text-sm text-gray-500 duration-300 transform scale-75 -translate-y-6 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
-              >Nombres</label
-            >
-          </div>
-          <div class="relative z-0 w-full mb-5 group">
-            <input
-              type="text"
-              name="apellido"
-              id="apellido"
-              required
-              class="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-blue-400 peer"
-              placeholder=" "
-            />
-            <label
-              for="apellido"
-              class="absolute text-sm text-gray-500 duration-300 transform scale-75 -translate-y-6 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
-              >Apellidos</label
-            >
-          </div>
-        </div>
-
-        <!-- Teléfono -->
-        <div class="relative z-0 w-full mb-5 group">
-          <input
-            type="tel"
-            name="telefono"
-            id="telefono"
-            required
-            class="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-blue-400 peer"
-            placeholder=" "
-          />
-          <label
-            for="telefono"
-            class="absolute text-sm text-gray-500 duration-300 transform scale-75 -translate-y-6 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
-            >Teléfono</label
-          >
-        </div>
-
-        <!-- Botón registrar -->
+        <!-- Botón iniciar sesión -->
         <button
           type="submit"
-          class="w-full mb-4 text-white bg-blue-400 hover:bg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          class="w-full mb-4 text-white bg-emerald-500 hover:bg-emerald-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
         >
-          Registrarse
+          Iniciar sesión
         </button>
 
         <!-- Separador -->
@@ -259,21 +190,29 @@
             alt="Google"
             class="w-5 h-5"
           />
-          Continuar con Google
+          Iniciar sesión con Google
         </button>
 
         <!-- Facebook -->
         <button
           type="button"
-          class="w-full flex items-center justify-center gap-2 text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5"
+          class="w-full flex items-center justify-center gap-2 text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5"
         >
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path
               d="M22 12a10 10 0 10-11.6 9.87v-6.99H7.9v-2.88h2.5V9.41c0-2.46 1.46-3.83 3.7-3.83 1.07 0 2.18.19 2.18.19v2.4h-1.23c-1.22 0-1.6.76-1.6 1.55v1.86h2.72l-.44 2.88h-2.28v6.99A10 10 0 0022 12z"
             />
           </svg>
-          Continuar con Facebook
+          Iniciar con Facebook
         </button>
+
+        <!-- Enlace a registro -->
+        <p class="mt-4 text-sm text-center text-gray-600">
+          ¿No tienes una cuenta?
+          <a href="./login.html" class="text-emerald-600 hover:underline"
+            >Regístrate aquí</a
+          >
+        </p>
       </form>
     </div>
 

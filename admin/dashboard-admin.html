@@ -3,140 +3,822 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>Admin</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tailwindcss/forms@0.5.3/dist/forms.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .modal {
+        transition: opacity 0.3s ease;
+        z-index: 50;
+      }
+      .modal-formulario {
+        z-index: 60; /* Nivel superior para formularios */
+      }
+      .modal-card {
+        transition: all 0.3s ease;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-card.active {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      /* Contenedor de tabla con altura máxima y scroll */
+      .table-container {
+        max-height: 60vh;
+        overflow-y: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      }
+
+      /* Estilos para DataTables */
+      .dataTables_wrapper .dataTables_filter input,
+      .dataTables_wrapper .dataTables_length select {
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        height: 2.5rem;
+        transition: all 0.2s ease;
+      }
+
+      .dataTables_wrapper .dataTables_filter input:focus,
+      .dataTables_wrapper .dataTables_length select:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+      }
+
+      .dataTables_wrapper .dataTables_filter input {
+        width: 250px;
+      }
+
+      .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.5rem 0.75rem;
+        margin: 0 0.125rem;
+        border-radius: 0.375rem;
+        background-color: #f3f4f6;
+        border: 1px solid #d1d5db;
+        color: #374151;
+        transition: all 0.2s ease;
+      }
+
+      .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background-color: #e5e7eb;
+        transform: translateY(-1px);
+      }
+
+      .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: #10b981;
+        color: white !important;
+        border-color: #10b981;
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+      }
+
+      table.dataTable.display tbody tr:nth-child(even) {
+        background-color: #f9fafb;
+      }
+
+      table.dataTable.display tbody tr:hover {
+        background-color: #ecfdf5;
+      }
+
+      table.dataTable thead {
+        background-color: #10b981;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      table.dataTable thead th {
+        border-bottom: 2px solid #059669;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+      }
+
+      /* Botones de acción mejorados */
+      .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.375rem 0.75rem;
+        margin: 0 0.125rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+        min-width: 2.5rem;
+      }
+
+      .btn-edit {
+        background-color: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+      }
+
+      .btn-edit:hover {
+        background-color: #2563eb;
+        border-color: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+      }
+
+      .btn-delete {
+        background-color: #ef4444;
+        color: white;
+        border-color: #ef4444;
+      }
+
+      .btn-delete:hover {
+        background-color: #dc2626;
+        border-color: #dc2626;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+      }
+
+      .btn-view {
+        background-color: #10b981;
+        color: white;
+        border-color: #10b981;
+      }
+
+      .btn-view:hover {
+        background-color: #059669;
+        border-color: #059669;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+      }
+
+      /* Iconos para los botones */
+      .btn-action svg {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.25rem;
+      }
+
+      /* Mejoras en la paginación */
+      .dataTables_wrapper .dataTables_info {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+
+      .dataTables_wrapper .dataTables_length label {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+
+      .dataTables_wrapper .dataTables_filter label {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+
+      /* Responsive para el modal */
+      @media (max-width: 768px) {
+        .modal-card {
+          margin: 1rem;
+          max-height: 95vh;
+        }
+
+        .table-container {
+          max-height: 50vh;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+          width: 200px;
+        }
+      }
+
+      /* Scrollbar personalizado */
+      .table-container::-webkit-scrollbar,
+      .modal-card::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .table-container::-webkit-scrollbar-track,
+      .modal-card::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb,
+      .modal-card::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb:hover,
+      .modal-card::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      .modal-edicion {
+        max-width: 600px;
+        width: 90%;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #374151;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        background-color: #fff;
+        transition: border-color 0.2s;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        background-color: #fff;
+        transition: border-color 0.2s;
+      }
+
+      .form-select:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+      }
+
+      .form-textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        background-color: #fff;
+        transition: border-color 0.2s;
+      }
+
+      .form-textarea:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+      }
+
+      .btn-guardar {
+        background-color: #10b981;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      .btn-guardar:hover {
+        background-color: #059669;
+      }
+
+      .btn-cancelar {
+        background-color: #ef4444;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      .btn-cancelar:hover {
+        background-color: #dc2626;
+      }
+
+      /* Estilos para el modal de ver producto */
+      .detalle-producto {
+        margin-bottom: 1rem;
+      }
+      .detalle-producto label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.25rem;
+        color: #4b5563;
+      }
+      .detalle-producto div {
+        padding: 0.5rem;
+        background-color: #f9fafb;
+        border-radius: 0.375rem;
+        border: 1px solid #e5e7eb;
+      }
+    </style>
   </head>
   <body class="bg-amber-100 min-h-screen pt-24">
-    <!-- NAVBAR -->
-    <nav class="bg-emerald-900 fixed w-full z-50 top-0 start-0 border-b border-emerald-900">
-      <div class="max-w-screen-xl flex flex-col md:flex-row items-center justify-between mx-auto p-4 gap-2">
-        <!-- Logo -->
-        <a href="../index.html" class="flex items-center space-x-3">
-          <svg class="w-10 h-10 text-amber-50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4" />
-          </svg>
-          <span class="text-2xl font-semibold text-amber-50">EduClick</span>
-        </a>
-
-        <!-- Saludo -->
-        <div class="flex-1 flex justify-center order-last md:order-none">
-          <span id="saludoUsuario"
-            class="text-amber-50 font-medium text-sm md:text-base text-center bg-emerald-800 py-2 px-6 rounded-lg shadow-md">
-            <!-- JS insertará el saludo -->
-          </span>
+    <!-- Navbar -->
+    <nav class="bg-emerald-900 fixed w-full top-0 z-50">
+      <div
+        class="max-w-screen-xl mx-auto px-4 py-3 flex justify-between items-center"
+      >
+        <span class="text-white text-2xl font-bold">EduClick</span>
+        <div id="saludoUsuario" class="text-white font-medium">
+          Bienvenido, Administrador
         </div>
-
-        <!-- Botón cerrar sesión -->
-        <div class="flex justify-end">
-          <button type="button" onclick="cerrarSesion()"
-            class="text-white bg-rose-600 hover:bg-rose-700 font-medium focus:ring-4 focus:outline-none focus:ring-rose-600 rounded-lg text-sm px-4 py-2">
-            Cerrar Sesión
-          </button>
-        </div>
+        <button
+          onclick="cerrarSesion()"
+          class="bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700 transition-colors"
+        >
+          Cerrar Sesión
+        </button>
       </div>
     </nav>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="max-w-screen-xl mx-auto mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
-      <!-- Carta 1: Registrar Usuario -->
-      <div onclick="abrirModal('modalUsuario')"
-        class="cursor-pointer bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
-        <h3 class="text-xl font-semibold text-emerald-800 mb-2">Registrar Usuario</h3>
-        <p class="text-gray-600">Agregar nuevos usuarios al sistema.</p>
+    <!-- Main Content -->
+    <main
+      class="max-w-screen-md mx-auto mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 px-6"
+    >
+      <!-- Usuario Card -->
+      <div
+        onclick="abrirModal('modalUsuario')"
+        class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition flex flex-col items-center text-center"
+      >
+        <svg
+          class="w-16 h-16 text-emerald-600 hover:text-sky-400 transition-colors mb-4"
+          viewBox="0 0 32 32"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g>
+            <path
+              d="M18.8,21.5c0.3-0.5,0.1-1.1-0.3-1.4L17,19.2V17c0-0.6-0.4-1-1-1s-1,0.4-1,1v2.2l-1.5,0.9c-0.5,0.3-0.6,0.9-0.3,1.4 c0.3,0.5,0.9,0.6,1.4,0.3l1.4-0.9c0,0,0.1,0,0.1,0s0.1,0,0.1,0l1.4,0.9C17.6,22,17.8,22,18,22C18.3,22,18.7,21.8,18.8,21.5z"
+            />
+            <path
+              d="M11,14l10,0c0.3,0,0.6-0.1,0.8-0.4c0.2-0.2,0.3-0.5,0.2-0.8c-0.3-1.5-1.4-2.7-2.9-3.1c-0.4-0.1-0.7-0.4-0.8-0.8 C18.7,8.4,19,7.7,19,7V5c0-1.7-1.3-3-3-3s-3,1.3-3,3v2c0,0.7,0.3,1.4,0.7,1.9c-0.1,0.4-0.4,0.7-0.8,0.8c-1.5,0.4-2.6,1.6-2.8,3.1 c-0.1,0.3,0,0.6,0.2,0.8C10.4,13.9,10.7,14,11,14z"
+            />
+            <path
+              d="M27.1,25.7c-0.4-0.1-0.7-0.4-0.8-0.8c0.4-0.5,0.7-1.2,0.7-1.9v-2c0-1.7-1.3-3-3-3s-3,1.3-3,3v2c0,0.7,0.3,1.4,0.7,1.9 c-0.1,0.4-0.4,0.7-0.8,0.8c-1.5,0.4-2.6,1.6-2.8,3.1c-0.1,0.3,0,0.6,0.2,0.8c0.2,0.2,0.5,0.4,0.8,0.4l10,0c0.3,0,0.6-0.1,0.8-0.4 c0.2-0.2,0.3-0.5,0.2-0.8C29.7,27.3,28.5,26.1,27.1,25.7z"
+            />
+            <path
+              d="M11.1,25.7c-0.4-0.1-0.7-0.4-0.8-0.8c0.4-0.5,0.7-1.2,0.7-1.9v-2c0-1.7-1.3-3-3-3s-3,1.3-3,3v2c0,0.7,0.3,1.4,0.7,1.9 c-0.1,0.4-0.4,0.7-0.8,0.8c-1.5,0.4-2.6,1.6-2.8,3.1c-0.1,0.3,0,0.6,0.2,0.8C2.4,29.9,2.7,30,3,30l10,0c0.3,0,0.6-0.1,0.8-0.4 c0.2-0.2,0.3-0.5,0.2-0.8C13.7,27.3,12.5,26.1,11.1,25.7z"
+            />
+          </g>
+        </svg>
+        <h3 class="text-2xl font-bold text-emerald-800 mb-2">
+          Registrar Usuario
+        </h3>
+        <p class="text-gray-600 text-sm">Agregar nuevos usuarios al sistema.</p>
       </div>
 
-      <!-- Carta 2 y 3 (placeholders) -->
-      <div class="cursor-pointer bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
-        <h3 class="text-xl font-semibold text-emerald-800 mb-2">Registrar Producto</h3>
-        <p class="text-gray-600">Registrar productos para la venta.</p>
-      </div>
-
-      <div class="cursor-pointer bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
-        <h3 class="text-xl font-semibold text-emerald-800 mb-2">Registrar Venta</h3>
-        <p class="text-gray-600">Capturar nueva venta o transacción.</p>
+      <!-- Producto Card -->
+      <div
+        onclick="abrirModal('modalProducto')"
+        class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition flex flex-col items-center text-center"
+      >
+        <svg
+          class="w-16 h-16 text-emerald-600 hover:text-sky-400 transition-colors mb-4"
+          fill="currentColor"
+          viewBox="0 0 470.721 470.722"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g>
+            <path
+              d="M106.037,72.02V50.561c0-5.784-4.693-10.477-10.477-10.477c-5.787,0-10.471,4.693-10.471,10.477v212.805 c0,0.846,0.127,1.662,0.313,2.453c-0.012,17.449-0.018,34.909-0.023,51.524H77.94c-15.737,0-28.611,12.354-29.524,27.869 c0.012,0.946,0.024,1.661,0.036,2.128c0.006,0.284-0.042,0.55-0.059,0.828c0.636,15.77,13.63,28.406,29.548,28.406h7.457 c0.006,7.855,0.018,14.919,0.03,20.954h-9.073c-0.544,0-1.064-0.077-1.596-0.159c-26.403-1.649-47.393-23.59-47.393-50.407 c0-0.608,0.071-1.2,0.088-1.809c-0.319-31.114,0-267.743,0.039-293.496c-0.044-0.364-0.115-0.718-0.115-1.091 C27.376,22.683,50.062,0,77.946,0h16.742h254.048h2.56c5.786,0,10.479,4.69,10.479,10.477v40.164H156.949 C137.045,50.628,119.014,58.836,106.037,72.02z M130.035,418.399c0.012,0.945,0.023,1.667,0.035,2.128 c0,0.283-0.047,0.556-0.059,0.839c0.635,15.759,13.63,28.401,29.554,28.401h262.89v-28.957c0-5.792,4.693-10.479,10.48-10.479 c5.786,0,10.474,4.688,10.474,10.479v39.438c0,5.78-4.688,10.474-10.474,10.474H157.981c-0.553,0-1.073-0.077-1.599-0.166 c-26.4-1.649-47.393-23.59-47.393-50.401c0-0.608,0.074-1.205,0.092-1.814c-0.322-31.114,0-267.739,0.036-293.493 c-0.042-0.37-0.116-0.721-0.116-1.097c0-27.878,22.686-50.563,50.57-50.563h16.742h254.051h2.565 c5.786,0,10.474,4.69,10.474,10.477v296.114c0,5.78-4.688,10.474-10.474,10.474c-0.06,0-0.125-0.018-0.184-0.018 c-0.769,0.184-1.566,0.302-2.394,0.302H159.559C143.821,390.536,130.948,402.89,130.035,418.399z M166.708,336.553 c0,5.787,4.69,10.48,10.477,10.48c5.786,0,10.477-4.693,10.477-10.48V123.75c0-5.787-4.69-10.477-10.477-10.477 c-5.787,0-10.477,4.69-10.477,10.477V336.553z"
+            />
+          </g>
+        </svg>
+        <h3 class="text-2xl font-bold text-emerald-800 mb-2">
+          Registrar Producto
+        </h3>
+        <p class="text-gray-600 text-sm">Registrar productos para la venta.</p>
       </div>
     </main>
 
-    <!-- MODAL USUARIO -->
-    <div id="modalUsuario"
-      class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-      <div id="modalUsuarioCard"
-        class="bg-white rounded-xl p-6 w-full max-w-md relative shadow-2xl transform scale-95 opacity-0 transition-all duration-300">
-        <!-- Botón cerrar -->
-        <button onclick="cerrarModal('modalUsuario')"
-          class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold transition">&times;</button>
-
-        <!-- Contenido -->
-        <h2 class="text-2xl font-semibold text-emerald-800 mb-6 text-center">Registrar Usuario</h2>
-
-        <form id="formUsuario" class="space-y-4">
-          <input type="email" placeholder="Correo"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-600 outline-none"
-            required />
-          <input type="password" placeholder="Contraseña"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-600 outline-none"
-            required />
-          <input type="text" placeholder="Nombre completo"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-600 outline-none"
-            required />
-          <input type="tel" placeholder="Celular"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-600 outline-none"
-            required />
-          <select
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-600 outline-none"
-            required>
-            <option value="">Selecciona un rol</option>
-            <option value="admin">Admin</option>
-            <option value="cliente">Cliente</option>
-            <option value="vendedor">Vendedor</option>
-          </select>
-          <button type="submit"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-4 py-2 w-full font-medium transition">
-            Guardar
+    <!-- Modales -->
+    <div
+      id="modalUsuario"
+      class="modal fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none"
+    >
+      <div
+        id="modalUsuarioCard"
+        class="modal-card bg-white rounded-xl p-6 w-full max-w-6xl relative shadow-2xl scale-95 opacity-0 mx-4"
+      >
+        <button
+          onclick="cerrarModal('modalUsuario')"
+          class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold z-20"
+        >
+          &times;
+        </button>
+        <div class="mb-6">
+          <h2 class="text-2xl font-semibold text-emerald-800 mb-4">
+            Gestión de Usuarios
+          </h2>
+          <button
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md"
+            onclick="abrirModal('modalAgregarUsuario')"
+          >
+            <svg
+              class="w-4 h-4 inline-block mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            Nuevo Usuario
           </button>
-        </form>
+        </div>
+        <div class="tabla-usuarios">
+          <table
+            id="tablaUsuarios"
+            class="display w-full text-sm text-left text-gray-500"
+          >
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3">ID</th>
+                <th scope="col" class="px-6 py-3">Nombre</th>
+                <th scope="col" class="px-6 py-3">Correo</th>
+                <th scope="col" class="px-6 py-3">Rol</th>
+                <th scope="col" class="px-6 py-3">Estado</th>
+                <th scope="col" class="px-6 py-3">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- JS FUNCIONALIDAD -->
-    <script>
-      // Saludo dinámico
-      const usuario = JSON.parse(localStorage.getItem("usuarioActivo"));
-      const saludo = document.getElementById("saludoUsuario");
-      if (usuario && saludo) {
-        saludo.textContent = `Bienvenido ${usuario.rol} ${usuario.name}`;
-      }
+    <div
+      id="modalProducto"
+      class="modal fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none"
+    >
+      <div
+        id="modalProductoCard"
+        class="modal-card bg-white rounded-xl p-6 w-full max-w-6xl relative shadow-2xl scale-95 opacity-0 mx-4"
+      >
+        <button
+          onclick="cerrarModal('modalProducto')"
+          class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold z-20"
+        >
+          &times;
+        </button>
+        <div class="mb-6">
+          <h2 class="text-2xl font-semibold text-emerald-800 mb-4">
+            Gestión de Productos
+          </h2>
+          <button
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md"
+            onclick="abrirModal('modalAgregarProducto')"
+          >
+            <svg
+              class="w-4 h-4 inline-block mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            Nuevo Producto
+          </button>
+        </div>
+        <div class="tabla-productos">
+          <table
+            id="tablaProductos"
+            class="display w-full text-sm text-left text-gray-500"
+          >
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3">ID</th>
+                <th scope="col" class="px-6 py-3">Nombre</th>
+                <th scope="col" class="px-6 py-3">Categoría</th>
+                <th scope="col" class="px-6 py-3">Precio</th>
+                <th scope="col" class="px-6 py-3">Stock</th>
+                <th scope="col" class="px-6 py-3">Estado</th>
+                <th scope="col" class="px-6 py-3">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-      // Animación para abrir modal
-      function abrirModal(id) {
-        const modal = document.getElementById(id);
-        const card = modal.querySelector(`#${id}Card`);
-        modal.classList.remove("opacity-0", "pointer-events-none");
-        setTimeout(() => {
-          card.classList.remove("scale-95", "opacity-0");
-          card.classList.add("scale-100", "opacity-100");
-        }, 10);
-      }
+    <!-- Modal para Agregar Producto -->
+    <div
+      id="modalAgregarProducto"
+      class="modal modal-formulario fixed inset-0 z-60 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none"
+    >
+      <div
+        class="modal-card bg-white rounded-xl p-6 w-full max-w-lg relative shadow-2xl scale-95 opacity-0 mx-4 modal-edicion"
+      >
+        <button
+          onclick="cerrarModal('modalAgregarProducto')"
+          class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold z-20"
+        >
+          &times;
+        </button>
+        <div class="mb-6">
+          <h2 class="text-2xl font-semibold text-emerald-800 mb-4">
+            Agregar Nuevo Producto
+          </h2>
+          <form id="formAgregarProducto">
+            <div class="form-group">
+              <label class="form-label">Nombre</label>
+              <input
+                type="text"
+                id="agregarNombre"
+                class="form-input"
+                required
+              />
+            </div>
 
-      // Animación para cerrar modal
-      function cerrarModal(id) {
-        const modal = document.getElementById(id);
-        const card = modal.querySelector(`#${id}Card`);
-        card.classList.remove("scale-100", "opacity-100");
-        card.classList.add("scale-95", "opacity-0");
-        setTimeout(() => {
-          modal.classList.add("opacity-0", "pointer-events-none");
-        }, 200);
-      }
+            <div class="form-group">
+              <label class="form-label">Categoría</label>
+              <select id="agregarCategoria" class="form-select" required>
+                <option value="masvendidos">Más vendidos</option>
+                <option value="novedades">Novedades</option>
+                <option value="clasicos">Clásicos</option>
+              </select>
+            </div>
 
-      // Cerrar sesión
-      function cerrarSesion() {
-        localStorage.removeItem("usuarioActivo");
-        window.location.href = "../index.html";
-      }
-    </script>
+            <div class="form-group">
+              <label class="form-label">Precio</label>
+              <input
+                type="text"
+                id="agregarPrecio"
+                class="form-input"
+                required
+              />
+            </div>
 
-    <script src="https://unpkg.com/flowbite@1.6.5/dist/flowbite.min.js"></script>
+            <div class="form-group">
+              <label class="form-label">Stock</label>
+              <input
+                type="number"
+                id="agregarStock"
+                class="form-input"
+                required
+                min="0"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Estado</label>
+              <select id="agregarEstado" class="form-select" required>
+                <option value="Disponible">Disponible</option>
+                <option value="Agotado">Agotado</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descripción</label>
+              <textarea
+                id="agregarDescripcion"
+                class="form-textarea"
+                required
+              ></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-8">
+              <button
+                type="button"
+                onclick="cerrarModal('modalAgregarProducto')"
+                class="btn-cancelar"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn-guardar">
+                Guardar Producto
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="modalEditarProducto"
+      class="modal modal-formulario fixed inset-0 z-60 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none"
+    >
+      <div
+        class="modal-card bg-white rounded-xl p-6 w-full max-w-lg relative shadow-2xl scale-95 opacity-0 mx-4 modal-edicion"
+      >
+        <button
+          onclick="cerrarModal('modalEditarProducto')"
+          class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold z-20"
+        >
+          &times;
+        </button>
+        <div class="mb-6">
+          <h2 class="text-2xl font-semibold text-emerald-800 mb-4">
+            Editar Producto
+          </h2>
+          <form id="formEditarProducto">
+            <div class="form-group">
+              <label class="form-label">Nombre</label>
+              <input
+                type="text"
+                id="editarNombre"
+                class="form-input"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Categoría</label>
+              <select id="editarCategoria" class="form-select" required>
+                <option value="masvendidos">Más vendidos</option>
+                <option value="novedades">Novedades</option>
+                <option value="clasicos">Clásicos</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Precio</label>
+              <input
+                type="text"
+                id="editarPrecio"
+                class="form-input"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Stock</label>
+              <input
+                type="number"
+                id="editarStock"
+                class="form-input"
+                required
+                min="0"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Estado</label>
+              <select id="editarEstado" class="form-select" required>
+                <option value="Disponible">Disponible</option>
+                <option value="Agotado">Agotado</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descripción</label>
+              <textarea
+                id="editarDescripcion"
+                class="form-textarea"
+                required
+              ></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-8">
+              <button
+                type="button"
+                onclick="cerrarModal('modalEditarProducto')"
+                class="btn-cancelar"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn-guardar">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Ver Producto -->
+    <div
+      id="modalVerProducto"
+      class="modal modal-formulario fixed inset-0 z-60 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none"
+    >
+      <div
+        class="modal-card bg-white rounded-xl p-6 w-full max-w-lg relative shadow-2xl scale-95 opacity-0 mx-4"
+      >
+        <button
+          onclick="cerrarModal('modalVerProducto')"
+          class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold z-20"
+        >
+          &times;
+        </button>
+        <div class="mb-6">
+          <h2 class="text-2xl font-semibold text-emerald-800 mb-4">
+            Detalles del Producto
+          </h2>
+          <div class="detalle-producto">
+            <label>ID</label>
+            <div id="verId"></div>
+          </div>
+          <div class="detalle-producto">
+            <label>Nombre</label>
+            <div id="verNombre"></div>
+          </div>
+          <div class="detalle-producto">
+            <label>Categoría</label>
+            <div id="verCategoria"></div>
+          </div>
+          <div class="detalle-producto">
+            <label>Precio</label>
+            <div id="verPrecio"></div>
+          </div>
+          <div class="detalle-producto">
+            <label>Stock</label>
+            <div id="verStock"></div>
+          </div>
+          <div class="detalle-producto">
+            <label>Estado</label>
+            <div id="verEstado"></div>
+          </div>
+          <div class="detalle-producto">
+            <label>Descripción</label>
+            <div id="verDescripcion" class="form-textarea bg-gray-50"></div>
+          </div>
+          <div class="flex justify-end mt-8">
+            <button
+              type="button"
+              onclick="cerrarModal('modalVerProducto')"
+              class="btn-cancelar"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Confirmar Eliminación -->
+    <div
+      id="modalConfirmarEliminacion"
+      class="modal modal-formulario fixed inset-0 z-60 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none"
+    >
+      <div
+        class="modal-card bg-white rounded-xl p-6 w-full max-w-md relative shadow-2xl scale-95 opacity-0 mx-4"
+      >
+        <button
+          onclick="cerrarModal('modalConfirmarEliminacion')"
+          class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold z-20"
+        >
+          &times;
+        </button>
+        <div class="text-center">
+          <h2 class="text-2xl font-semibold text-emerald-800 mb-4">
+            Confirmar Eliminación
+          </h2>
+          <p class="text-gray-600 mb-8" id="mensajeEliminacion">
+            ¿Estás seguro de que deseas eliminar este producto?
+          </p>
+
+          <div class="flex justify-center gap-4">
+            <button
+              onclick="cerrarModal('modalConfirmarEliminacion')"
+              class="btn-cancelar"
+            >
+              Cancelar
+            </button>
+            <button
+              onclick="confirmarEliminacion()"
+              class="btn-guardar bg-red-600 hover:bg-red-700"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+     <script src="./admin.js"></script>
+     <script src="./datatableAdmin.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   </body>
 </html>

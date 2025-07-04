@@ -1,8 +1,6 @@
 // ===================================
 // CARRUSEL DE LIBROS REUTILIZABLE
 // ===================================
-
-// Clase para manejar el carrusel de libros
 class BookCarousel {
     constructor(container, books) {
         this.container = container;
@@ -17,47 +15,40 @@ class BookCarousel {
         this.setupResponsive();
     }
 
-    // Determina cuántos libros mostrar por slide según el tamaño de pantalla
     getBooksPerSlide() {
-        if (window.innerWidth >= 1024) return 4; // lg y superior
-        if (window.innerWidth >= 768) return 3;  // md
-        if (window.innerWidth >= 640) return 2;  // sm
-        return 1; // xs
+        if (window.innerWidth >= 1024) return 4;
+        if (window.innerWidth >= 768) return 3;
+        if (window.innerWidth >= 640) return 2;
+        return 1;
     }
 
-    // Inicializa el carrusel
     init() {
         this.render();
         this.updateIndicators();
     }
 
-    // Renderiza todo el carrusel
     render() {
         const slides = this.createSlides();
         const indicators = this.createIndicators();
         const controls = this.createControls();
 
         this.container.innerHTML = `
-            <div class="relative w-full bg-red-950 rounded-xl shadow-lg overflow-hidden">
-                <!-- Carousel wrapper -->
+            <div class="relative w-full rounded-xl shadow-lg overflow-hidden">
                 <div class="carousel-wrapper relative h-auto overflow-hidden" id="wrapper-${this.carouselId}">
                     ${slides}
                 </div>
                 
-                <!-- Indicadores -->
                 ${this.totalSlides > 1 ? `
                     <div class="absolute z-30 flex -translate-x-1/2 bottom-4 left-1/2 space-x-2">
                         ${indicators}
                     </div>
                 ` : ''}
                 
-                <!-- Controles -->
                 ${this.totalSlides > 1 ? controls : ''}
             </div>
         `;
     }
 
-    // Crea todos los slides del carrusel
     createSlides() {
         let slides = '';
         
@@ -80,7 +71,6 @@ class BookCarousel {
         return slides;
     }
 
-    // Crea una tarjeta individual de libro
     createBookCard(book) {
         return `
             <div class="book-card bg-orange-100 border border-amber-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
@@ -96,13 +86,9 @@ class BookCarousel {
                     <div class="mt-auto space-y-2">
                         ${book.price ? `<p class="text-lg font-bold text-green-600">${book.price}</p>` : ''}
                         <div class="flex gap-2">
-                            <button onclick="showBookDetails('${book.id}')" 
+                            <button onclick="openBookDetails(${JSON.stringify(book).replace(/"/g, '&quot;')})" 
                                     class="flex-1 px-3 py-2 text-sm font-medium text-center text-blue-700 border border-blue-700 rounded-lg hover:bg-blue-700 hover:text-white transition-colors duration-200">
-                                Saber más
-                            </button>
-                            <button onclick="buyBook('${book.id}')" 
-                                    class="flex-1 px-3 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200">
-                                Comprar
+                                Ver Detalles
                             </button>
                         </div>
                     </div>
@@ -111,7 +97,6 @@ class BookCarousel {
         `;
     }
 
-    // Crea los indicadores de posición
     createIndicators() {
         let indicators = '';
         for (let i = 0; i < this.totalSlides; i++) {
@@ -127,10 +112,8 @@ class BookCarousel {
         return indicators;
     }
 
-    // Crea los controles de navegación
     createControls() {
         return `
-            <!-- Botón anterior -->
             <button type="button" 
                     class="carousel-prev absolute top-1/2 left-4 z-30 -translate-y-1/2 flex items-center justify-center group">
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 hover:scale-110">
@@ -140,7 +123,6 @@ class BookCarousel {
                 </span>
             </button>
             
-            <!-- Botón siguiente -->
             <button type="button" 
                     class="carousel-next absolute top-1/2 right-4 z-30 -translate-y-1/2 flex items-center justify-center group">
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 hover:scale-110">
@@ -152,25 +134,18 @@ class BookCarousel {
         `;
     }
 
-    // Configura los event listeners
     setupEventListeners() {
-        // Event listeners para indicadores
         this.container.querySelectorAll('.indicator').forEach((indicator, index) => {
             indicator.addEventListener('click', () => this.goToSlide(index));
         });
 
-        // Event listeners para controles
         const prevBtn = this.container.querySelector('.carousel-prev');
         const nextBtn = this.container.querySelector('.carousel-next');
         
         if (prevBtn) prevBtn.addEventListener('click', () => this.prevSlide());
         if (nextBtn) nextBtn.addEventListener('click', () => this.nextSlide());
-
-        // Auto-play opcional (descomenta para activar)
-        // this.startAutoPlay();
     }
 
-    // Configura la responsividad
     setupResponsive() {
         window.addEventListener('resize', () => {
             const newBooksPerSlide = this.getBooksPerSlide();
@@ -184,7 +159,6 @@ class BookCarousel {
         });
     }
 
-    // Navega a un slide específico
     goToSlide(slideIndex) {
         if (slideIndex >= 0 && slideIndex < this.totalSlides) {
             this.currentSlide = slideIndex;
@@ -193,19 +167,16 @@ class BookCarousel {
         }
     }
 
-    // Navega al siguiente slide
     nextSlide() {
         const nextIndex = (this.currentSlide + 1) % this.totalSlides;
         this.goToSlide(nextIndex);
     }
 
-    // Navega al slide anterior
     prevSlide() {
         const prevIndex = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
         this.goToSlide(prevIndex);
     }
 
-    // Actualiza la visualización de los slides
     updateSlides() {
         const slides = this.container.querySelectorAll('.carousel-slide');
         slides.forEach((slide, index) => {
@@ -219,7 +190,6 @@ class BookCarousel {
         });
     }
 
-    // Actualiza los indicadores
     updateIndicators() {
         const indicators = this.container.querySelectorAll('.indicator');
         indicators.forEach((indicator, index) => {
@@ -232,20 +202,11 @@ class BookCarousel {
             }
         });
     }
-
-    // Inicia el auto-play (opcional)
-    startAutoPlay(interval = 5000) {
-        setInterval(() => {
-            this.nextSlide();
-        }, interval);
-    }
 }
 
 // ===================================
 // DATOS DE LIBROS
 // ===================================
-
-// Aquí defines los libros para cada carrusel
 const booksData = {
   masvendidos: [
     {
@@ -254,6 +215,7 @@ const booksData = {
       description: "El inicio de la saga mágica más famosa del mundo. Acompaña a Harry en su primera aventura en Hogwarts.",
       image: "../assets/images/libros/harry-potter-piedra.jfif",
       price: "COP 79,900",
+      category: "Fantasía"
     },
     {
       id: "hobbit",
@@ -261,6 +223,7 @@ const booksData = {
       description: "La extraordinaria aventura de Bilbo Bolsón que cambió para siempre la Tierra Media.",
       image: "../assets/images/libros/el-hobbit.jfif",
       price: "COP 63,900",
+      category: "Fantasía"
     },
     {
       id: "cien-anos",
@@ -268,6 +231,7 @@ const booksData = {
       description: "La obra maestra de Gabriel García Márquez que define el realismo mágico.",
       image: "../assets/images/libros/cien-anos-de-soledad.jfif",
       price: "COP 91,900",
+      category: "Literatura"
     },
     {
       id: "dune",
@@ -275,35 +239,8 @@ const booksData = {
       description: "El clásico de ciencia ficción que inspiró películas y generaciones de lectores.",
       image: "../assets/images/libros/dune.jfif",
       price: "COP 99,900",
-    },
-    {
-      id: "1984",
-      title: "1984",
-      description: "La distopía de George Orwell que predijo nuestro futuro tecnológico.",
-      image: "../assets/images/libros/1984.jfif",
-      price: "COP 75,900",
-    },
-    {
-      id: "fuego",
-      title: "Juego de Tronos",
-      description: "La historia épica de Westeros donde el poder y la traición reinan.",
-      image: "../assets/images/libros/juego-de-tronos.jfif",
-      price: "COP 85,900",
-    },
-    {
-      id: "paulo",
-      title: "El Alquimista",
-      description: "Una fábula sobre seguir tus sueños y encontrar tu leyenda personal.",
-      image: "../assets/images/libros/el-alquimista.jfif",
-      price: "COP 58,900",
-    },
-    {
-      id: "divergente",
-      title: "Divergente",
-      description: "Una sociedad dividida por virtudes. Una chica que desafía todo.",
-      image: "../assets/images/libros/divergente.jfif",
-      price: "COP 69,900",
-    },
+      category: "Ciencia Ficción"
+    }
   ],
 
   novedades: [
@@ -313,6 +250,7 @@ const booksData = {
       description: "La nueva obra maestra de Kazuo Ishiguro sobre inteligencia artificial y humanidad.",
       image: "../assets/images/libros/klara.jfif",
       price: "COP 107,900",
+      category: "Ciencia Ficción"
     },
     {
       id: "ciudad-vapor",
@@ -320,6 +258,7 @@ const booksData = {
       description: "Relatos que expanden el universo de 'La Sombra del Viento'.",
       image: "../assets/images/libros/ciudad-vapor.jfif",
       price: "COP 87,900",
+      category: "Ficción"
     },
     {
       id: "susurros",
@@ -327,6 +266,7 @@ const booksData = {
       description: "Un thriller psicológico que mantendrá en vilo hasta la última página.",
       image: "../assets/images/libros/susurros.jfif",
       price: "COP 79,900",
+      category: "Thriller"
     },
     {
       id: "lapida",
@@ -334,35 +274,8 @@ const booksData = {
       description: "Una historia de misterio enterrada entre las tumbas del pasado.",
       image: "../assets/images/libros/lapida.jfif",
       price: "COP 84,900",
-    },
-    {
-      id: "invisible",
-      title: "Invisible",
-      description: "¿Hasta dónde puede llegar el silencio de un adolescente?",
-      image: "../assets/images/libros/invisible.jfif",
-      price: "COP 73,900",
-    },
-    {
-      id: "anhelo",
-      title: "Anhelo",
-      description: "Una historia juvenil con romance y fantasía sobrenatural.",
-      image: "../assets/images/libros/anhelo.jfif",
-      price: "COP 92,900",
-    },
-    {
-      id: "karma",
-      title: "El Karma de Vivir",
-      description: "Reflexiones sobre decisiones y consecuencias.",
-      image: "../assets/images/libros/karma.jfif",
-      price: "COP 68,900",
-    },
-    {
-      id: "destino",
-      title: "Contra el Destino",
-      description: "Un relato de valentía ante lo inevitable.",
-      image: "../assets/images/libros/contra-destino.jfif",
-      price: "COP 79,900",
-    },
+      category: "Misterio"
+    }
   ],
 
   clasicos: [
@@ -372,6 +285,7 @@ const booksData = {
       description: "La obra cumbre de Miguel de Cervantes y pilar de la literatura universal.",
       image: "../assets/images/libros/quijote.jfif",
       price: "COP 119,900",
+      category: "Clásico"
     },
     {
       id: "orgullo",
@@ -379,6 +293,7 @@ const booksData = {
       description: "La novela romántica de Jane Austen que definió un género literario.",
       image: "../assets/images/libros/orgullo-y-prejuicio.jfif",
       price: "COP 71,900",
+      category: "Clásico"
     },
     {
       id: "moby-dick",
@@ -386,6 +301,7 @@ const booksData = {
       description: "La épica aventura de Herman Melville sobre la obsesión y el mar.",
       image: "../assets/images/libros/moby-dick.jfif",
       price: "COP 95,900",
+      category: "Aventuras"
     },
     {
       id: "frankenstein",
@@ -393,121 +309,137 @@ const booksData = {
       description: "El clásico de Mary Shelley que explora los límites de la ciencia y la moral.",
       image: "../assets/images/libros/frankenstein.jfif",
       price: "COP 65,900",
-    },
-    {
-      id: "dracula",
-      title: "Drácula",
-      description: "El icónico vampiro que dio origen al mito moderno.",
-      image: "../assets/images/libros/dracula.jfif",
-      price: "COP 72,900",
-    },
-    {
-      id: "emma",
-      title: "Emma",
-      description: "Otra joya de Jane Austen que combina ingenio, romance y crítica social.",
-      image: "../assets/images/libros/emma.jfif",
-      price: "COP 74,900",
-    },
-    {
-      id: "corazon",
-      title: "Corazón, Diario de un Niño",
-      description: "Un clásico de la literatura italiana para jóvenes con grandes valores.",
-      image: "../assets/images/libros/corazon.jfif",
-      price: "COP 61,900",
-    },
-    {
-      id: "fausto",
-      title: "Fausto",
-      description: "La tragedia filosófica de Goethe sobre el pacto con el diablo.",
-      image: "../assets/images/libros/fausto.jfif",
-      price: "COP 82,900",
-    },
+      category: "Terror"
+    }
   ],
 };
 
+// ===================================
+// FUNCIONALIDADES DE MODALES
+// ===================================
+let currentBook = null;
+
+function openBookDetails(book) {
+    currentBook = book;
+    document.getElementById('detailImage').src = book.image;
+    document.getElementById('detailTitle').textContent = book.title;
+    document.getElementById('detailCategory').textContent = book.category;
+    document.getElementById('detailDescription').textContent = book.description;
+    document.getElementById('detailPrice').textContent = book.price;
+    
+    document.getElementById('bookDetailsModal').classList.remove('hidden');
+}
+
+function closeBookDetails() {
+    document.getElementById('bookDetailsModal').classList.add('hidden');
+}
+
+function openEditBook() {
+    if (!currentBook) return;
+    
+    document.getElementById('editTitle').value = currentBook.title;
+    document.getElementById('editDescription').value = currentBook.description;
+    document.getElementById('editPrice').value = currentBook.price.replace('COP ', '');
+    
+    document.getElementById('editBookModal').classList.remove('hidden');
+}
+
+function closeEditBook() {
+    document.getElementById('editBookModal').classList.add('hidden');
+}
+
+function openAddNewBook() {
+    document.getElementById('addNewBookModal').classList.remove('hidden');
+}
+
+function closeAddNewBook() {
+    document.getElementById('addNewBookModal').classList.add('hidden');
+}
+
+function openSalesDetails() {
+    if (!currentBook) return;
+    
+    // Generar datos de ventas de ejemplo
+    const salesData = [
+        { id: "V-001", date: "2023-05-15", client: "María Rodríguez", quantity: 2, total: "COP 159,800", status: "Completado" },
+        { id: "V-002", date: "2023-05-10", client: "Carlos Gómez", quantity: 1, total: "COP 79,900", status: "Completado" },
+        { id: "V-003", date: "2023-05-08", client: "Laura Martínez", quantity: 3, total: "COP 239,700", status: "Pendiente" },
+        { id: "V-004", date: "2023-05-05", client: "Pedro Sánchez", quantity: 1, total: "COP 79,900", status: "Completado" },
+        { id: "V-005", date: "2023-05-01", client: "Ana López", quantity: 2, total: "COP 159,800", status: "Cancelado" }
+    ];
+    
+    const tableBody = document.getElementById('salesTableBody');
+    tableBody.innerHTML = '';
+    
+    salesData.forEach(sale => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="py-2 px-4 border-b">${sale.id}</td>
+            <td class="py-2 px-4 border-b">${sale.date}</td>
+            <td class="py-2 px-4 border-b">${sale.client}</td>
+            <td class="py-2 px-4 border-b">${sale.quantity}</td>
+            <td class="py-2 px-4 border-b">${sale.total}</td>
+            <td class="py-2 px-4 border-b">
+                <span class="${getStatusClass(sale.status)} px-2 py-1 rounded-full text-xs">
+                    ${sale.status}
+                </span>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    document.getElementById('salesDetailsModal').classList.remove('hidden');
+}
+
+function getStatusClass(status) {
+    switch(status.toLowerCase()) {
+        case 'completado': return 'bg-green-100 text-green-800';
+        case 'pendiente': return 'bg-yellow-100 text-yellow-800';
+        case 'cancelado': return 'bg-red-100 text-red-800';
+        default: return 'bg-gray-100 text-gray-800';
+    }
+}
+
+function closeSalesDetails() {
+    document.getElementById('salesDetailsModal').classList.add('hidden');
+}
 
 // ===================================
-// FUNCIONES DE INICIALIZACIÓN
+// INICIALIZACIÓN
 // ===================================
-
-// Función para inicializar todos los carruseles
-function initializeCarousels() {
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar carruseles
     document.querySelectorAll('.book-carousel').forEach(container => {
         const carouselId = container.dataset.carouselId;
         const books = booksData[carouselId] || [];
         if (books.length > 0) {
             new BookCarousel(container, books);
-        } else {
-            console.warn(`No se encontraron libros para el carrusel: ${carouselId}`);
         }
     });
-}
-
-// ===================================
-// FUNCIONES DE BOTONES (PERSONALIZAR)
-// ===================================
-
-// Función para mostrar detalles del libro
-function showBookDetails(bookId) {
-    // Encuentra el libro en todos los datos
-    let foundBook = null;
     
-    Object.values(booksData).forEach(bookArray => {
-        const book = bookArray.find(b => b.id === bookId);
-        if (book) foundBook = book;
+    // Event listeners para modales
+    document.getElementById('closeDetailsModal').addEventListener('click', closeBookDetails);
+    document.getElementById('closeEditBookModal').addEventListener('click', closeEditBook);
+    document.getElementById('closeSalesDetailsModal').addEventListener('click', closeSalesDetails);
+    
+    // Botones de acción
+    document.getElementById('addNewBookBtn').addEventListener('click', openAddNewBook);
+    document.getElementById('editBookBtn').addEventListener('click', openEditBook);
+    document.getElementById('salesDetailsBtn').addEventListener('click', openSalesDetails);
+    document.getElementById('addNewBookBtn2').addEventListener('click', openAddNewBook);
+
+    // Event listeners para cerrar modales al hacer clic fuera
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function() {
+            closeBookDetails();
+            closeEditBook();
+            closeSalesDetails();
+        });
     });
-    
-    if (foundBook) {
-        // Aquí puedes implementar tu lógica personalizada
-        // Por ejemplo: mostrar un modal, redirigir a otra página, etc.
-        alert(`Detalles de: ${foundBook.title}\n\nDescripción: ${foundBook.description}\n\nPrecio: ${foundBook.price}`);
-        
-        // Ejemplo de redirección:
-        // window.location.href = `detalles.html?id=${bookId}`;
-        
-        // Ejemplo de modal (necesitarías crear el modal):
-        // openBookModal(foundBook);
-    } else {
-        console.error(`Libro no encontrado: ${bookId}`);
-    }
-}
+});
 
-// Función para comprar libro
-function buyBook(bookId) {
-    // Encuentra el libro en todos los datos
-    let foundBook = null;
-    
-    Object.values(booksData).forEach(bookArray => {
-        const book = bookArray.find(b => b.id === bookId);
-        if (book) foundBook = book;
-    });
-    
-    if (foundBook) {
-        // Aquí puedes implementar tu lógica de compra
-        // Por ejemplo: agregar al carrito, redirigir al checkout, etc.
-        alert(`¡Agregando al carrito!\n\nLibro: ${foundBook.title}\nPrecio: ${foundBook.price}`);
-        
-        // Ejemplo de agregar al carrito:
-        // addToCart(foundBook);
-        
-        // Ejemplo de redirección al checkout:
-        // window.location.href = `checkout.html?id=${bookId}`;
-        
-        // Ejemplo de integración con sistema de pago:
-        // initiatePayment(foundBook);
-    } else {
-        console.error(`Libro no encontrado: ${bookId}`);
-    }
-}
-
-// ===================================
-// INICIALIZACIÓN AUTOMÁTICA
-// ===================================
-
-// Inicializar carruseles cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', initializeCarousels);
-
-// Reinicializar carruseles si se agrega contenido dinámicamente
-function reinitializeCarousels() {
-    initializeCarousels();
+// Función de cierre de sesión
+function cerrarSesion() {
+    localStorage.removeItem('usuarioActual');
+    window.location.href = '../index.html';
 }
